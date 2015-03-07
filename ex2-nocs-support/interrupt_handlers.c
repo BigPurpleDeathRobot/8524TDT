@@ -13,7 +13,8 @@ void __attribute__ ((interrupt)) TIMER1_IRQHandler()
     remember to clear the pending interrupt by writing 1 to TIMER1_IFC
   */
   *TIMER1_IFC = *TIMER1_IF; /* clear interrupt flag */
-  sineWave(440, test);
+  //sineWave(440, test);
+  dacData(sinSound[test]);
   test++;
   if (test == 100)
     test = 0;
