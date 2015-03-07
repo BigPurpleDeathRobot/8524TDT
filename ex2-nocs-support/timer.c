@@ -3,6 +3,7 @@
 
 #include "efm32gg.h"
 
+
 /* function to setup the timer */
 void setupTimer(uint16_t period)
 {
@@ -18,7 +19,7 @@ void setupTimer(uint16_t period)
   */
   
   *CMU_HFPERCLKEN0 |= CMU2_HFPERCLKEN0_TIMER1; /* enable TIMER1 clock */
-  *TIMER1_CTRL |= 8 << 24; /* DIV256 for testing */
+  //*TIMER1_CTRL |= 8 << 24; /* DIV256 for testing */
   *TIMER1_TOP = period; /* set counter top value */
   *TIMER1_IEN = 1; /* enable overflow interrupt */
   *TIMER1_CMD = 1; /* start timer */

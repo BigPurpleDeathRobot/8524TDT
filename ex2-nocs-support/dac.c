@@ -19,3 +19,16 @@ void setupDAC()
   *DAC0_CH0CTRL = 1; /* enable left channel */
   *DAC0_CH1CTRL = 1; /* enable right channel */
 }
+
+void disableDAC()
+{
+  *CMU_HFPERCLKEN0 &= ~CMU2_HFPERCLKEN0_DAC0;
+  *DAC0_CH0CTRL = 0;
+  *DAC0_CH1CTRL = 0;
+}
+
+void dacData(uint16_t data)
+{
+  *DAC0_CH0DATA = data;
+  *DAC0_CH1DATA = data;
+}

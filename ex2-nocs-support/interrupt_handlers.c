@@ -1,8 +1,10 @@
 #include <stdint.h>
 #include <stdbool.h>
+#include <stdlib.h>
 
 #include "efm32gg.h"
-
+#include "proto.h"
+uint16_t test = 0;
 /* TIMER1 interrupt handler */
 void __attribute__ ((interrupt)) TIMER1_IRQHandler() 
 {  
@@ -11,7 +13,13 @@ void __attribute__ ((interrupt)) TIMER1_IRQHandler()
     remember to clear the pending interrupt by writing 1 to TIMER1_IFC
   */
   *TIMER1_IFC = *TIMER1_IF; /* clear interrupt flag */
-  *GPIO_PA_DOUT = ~*GPIO_PA_DOUT;  
+  sineWave(440, test);
+  test++;
+  if (test == 100)
+    test = 0;
+ 
+  
+  //disableDAC();
 }
 
 /* GPIO even pin interrupt handler */
