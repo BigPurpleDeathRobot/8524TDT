@@ -23,7 +23,7 @@ void setupGPIO()
   *GPIO_IEN = 0xff; /* pin in external interrupt enabled */
 }
 
-void gpioHandler(volatile sfx *selectSfx)
+void gpioHandler(volatile sfx *selectSfx, volatile sound_source_t *selectSource, volatile uint8_t *amplitude)
 {
   switch(*GPIO_PC_DIN)
   {
@@ -31,26 +31,46 @@ void gpioHandler(volatile sfx *selectSfx)
       setupDAC();
       setupTimer();
       *selectSfx = explosion;
+      *selectSource = sampleplayer;
       break;
     case 0xfd:
       setupDAC();
       setupTimer();
       *selectSfx = laser;
+      *selectSource = sampleplayer;
       break;
     case 0xfb:
       setupDAC();
       setupTimer();
       *selectSfx = powerup;
+      *selectSource = sampleplayer;
       break;
     case 0xf7:
       setupDAC();
       setupTimer();
       *selectSfx = jump;
+      *selectSource = sampleplayer;
       break;
     case 0xef:
       setupDAC();
       setupTimer();
       *selectSfx = song;
+      *selectSource = sampleplayer;
+      break;
+    case 0xdf:
+      *amplitude -= 25;
+      if(*amplitude < 25)
+        *amplitude = 25;
+      break;
+    case 0xbf:
+      setupDAC();
+      setupTimer();
+      *selectSource = synthesizer;
+      break;
+    case 0x7f:
+      *amplitude += 25;
+      if(*amplitude > 200)
+        *amplitude = 200;
       break;
   }
 }

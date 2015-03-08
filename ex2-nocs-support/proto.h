@@ -3,13 +3,16 @@
 
 /* Declaration of function prototypes */
 
+// SYNTHESIZER
+typedef enum {sampleplayer, synthesizer} sound_source_t;
+
 // PLAYER
 typedef enum {explosion, laser, powerup, jump, song} sfx;
-void play(sfx selected);
+void player(sfx selected, uint8_t amplitude);
 
 // GPIO
 void setupGPIO();
-void gpioHandler(volatile sfx *test);
+void gpioHandler(volatile sfx *selectSfx, volatile sound_source_t *selectSource, volatile uint8_t *amplitude);
 
 // TIMER
 void setupTimer();

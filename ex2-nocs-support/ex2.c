@@ -18,6 +18,7 @@ int main(void)
   
   /* in his house at R'lyeh, dead Cthulhu waits dreaming */
   __asm__("wfi");
+  //while(1);
   
 }
 

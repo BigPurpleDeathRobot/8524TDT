@@ -8,10 +8,10 @@
 #include "sound/sineTones.h"
 #include "sound/sfx.h"
 
-volatile uint32_t sample = 0;
-volatile sfx current;
+static volatile uint32_t sample = 0;
+static volatile sfx current;
 
-void play(sfx selected)
+void player(sfx selected, uint8_t amplitude)
 {
   const uint32_t *sampleNum;
   const uint16_t *selectedSfx;
@@ -51,7 +51,7 @@ void play(sfx selected)
   /* feed data to dac */
   if (sample < *sampleNum)
   {
-    dacData(selectedSfx[sample]);
+    dacData(selectedSfx[sample]/amplitude);
     sample++;
   }
   else
