@@ -4,23 +4,26 @@
 
 #include "efm32gg.h"
 #include "proto.h"
+#include "sound/sineTones.h"
+
 uint16_t test = 0;
+
 /* TIMER1 interrupt handler */
 void __attribute__ ((interrupt)) TIMER1_IRQHandler() 
 {  
-  /*
-    TODO feed new samples to the DAC
-    remember to clear the pending interrupt by writing 1 to TIMER1_IFC
-  */
   *TIMER1_IFC = *TIMER1_IF; /* clear interrupt flag */
-  //sineWave(440, test);
-  dacData(sinSound[test]);
+  dacData(boom[test]);
   test++;
-  if (test == 100)
-    test = 0;
- 
-  
-  //disableDAC();
+  if (test == boomLen)
+    //test = 0;
+    disableDAC();
+}
+
+/* LETIMER0 interrupt handler */
+void __attribute__ ((interrupt)) LETIMER0_IRQHandler() 
+{  
+  *LETIMER0_IFC = *LETIMER0_IF; /* clear interrupt flag */
+  /* TODO IF TIME */
 }
 
 /* GPIO even pin interrupt handler */

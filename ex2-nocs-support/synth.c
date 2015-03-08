@@ -8,12 +8,12 @@
 
 
 /* create one period at a given freq */
-void sineWave(uint16_t freq, uint16_t sample)
+uint16_t sineWave(uint16_t freq, uint16_t sample)
 {
   uint16_t buffer;
   
-  buffer = 1024 * (1 + sin((2*3.14159265359*sample*440)/44100));
-  dacData(buffer);
+  buffer = (uint16_t) 1024 * (1 + sin((2*3.14159265359*sample*freq)/44100));
+  return buffer;
 
 }
 

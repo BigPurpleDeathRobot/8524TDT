@@ -27,7 +27,7 @@ void disableDAC()
   *DAC0_CH1CTRL = 0;
 }
 
-void dacData(int16_t data)
+void dacData(uint16_t data)
 {
   *DAC0_CH0DATA = data;
   *DAC0_CH1DATA = data;

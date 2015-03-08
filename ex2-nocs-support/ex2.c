@@ -3,14 +3,6 @@
 
 #include "efm32gg.h"
 #include "proto.h"
-/* 
-  TODO calculate the appropriate sample period for the sound wave(s) 
-  you want to generate. The core clock (which the timer clock is derived
-  from) runs at 14 MHz by default. Also remember that the timer counter
-  registers are 16 bits.
-*/
-/* The period between sound samples, in clock cycles */
-#define   SAMPLE_PERIOD   317 /* ~44100 samples per second */
 
 /* Your code will start executing here */
 int main(void) 
@@ -18,31 +10,24 @@ int main(void)
   /* Call the peripheral setup functions */
   setupGPIO();
   setupDAC();
-  setupTimer(SAMPLE_PERIOD);
-  setupSleepMode(0);
+  setupTimer();
+  //setupLEtimer();
   
   /* Enable interrupt handling */
   setupNVIC();
   
-  /* TODO for higher energy efficiency, sleep while waiting for interrupts
-     instead of infinite loop for busy-waiting
-  */
-  //__asm__("wfi");
-  while(1);
+  /* set sleep mode */
+  setupSleepMode(2);
   
-  //return 0;
+  /* in his house at R'lyeh, dead Cthulhu waits dreaming */
+  __asm__("wfi");
+  
 }
 
 void setupNVIC()
 {
-  /* TODO use the NVIC ISERx registers to enable handling of interrupt(s)
-     remember two things are necessary for interrupt handling:
-      - the peripheral must generate an interrupt signal
-      - the NVIC must be configured to make the CPU handle the signal
-     You will need TIMER1, GPIO odd and GPIO even interrupt handling for this
-     assignment.
-  */
-  *ISER0 = 0x1802; /* enable GPIO ODD/EVEN and TIMER1 interrupt */
+  *ISER0 = 0x1802;
+  //*ISER0 = 0x4000802;
 }
 
 void setupSleepMode(uint8_t foo)
@@ -52,11 +37,9 @@ void setupSleepMode(uint8_t foo)
     foo = 0 only sleep 
     foo = 2 enables sleep-on-exit when returning from Handler mode to Thread mode
     foo = 6 enables sleep-on-exit and deep sleep mode
-    
-  */
+    */
   
   *SCR = foo;
-
 }
 
 
