@@ -1,16 +1,14 @@
-03:15:34 **** Build of configuration Default for project ex2-eclipse-makefile ****
-sudo make upload 
-/opt/energymicro/eACommander.sh -r --address 0x00000000 -f "ex2.bin" -r
-Start address set to 0x00000000.
-Flashing "ex2.bin"
-Uploading flashloader...
-Waiting for flashloader to become ready...
-Erasing Flash...
-Flashing EFM32...
-Finished!
+04:37:13 **** Build of configuration Default for project ex2-eclipse-makefile ****
+make 
+arm-none-eabi-gcc -mcpu=cortex-m3 -mthumb -g -std=c99 -Wall -c ex2.c -o ex2.o
+arm-none-eabi-gcc -mcpu=cortex-m3 -mthumb -g -std=c99 -Wall -c timer.c -o timer.o
+arm-none-eabi-gcc -mcpu=cortex-m3 -mthumb -g -std=c99 -Wall -c dac.c -o dac.o
+arm-none-eabi-gcc -mcpu=cortex-m3 -mthumb -g -std=c99 -Wall -c gpio.c -o gpio.o
+arm-none-eabi-gcc -mcpu=cortex-m3 -mthumb -g -std=c99 -Wall -c interrupt_handlers.c -o interrupt_handlers.o
+arm-none-eabi-gcc -mcpu=cortex-m3 -mthumb -g -std=c99 -Wall -c synthesizer.c -o synthesizer.o
+arm-none-eabi-gcc -mcpu=cortex-m3 -mthumb -g -std=c99 -Wall -c sound_effect.c -o sound_effect.o
+arm-none-eabi-gcc -T lib/efm32gg.ld ex2.o timer.o dac.o gpio.o interrupt_handlers.o synthesizer.o sound_effect.o -o ex2.elf --specs=nosys.specs -mcpu=cortex-m3 -mthumb -g -lgcc -lc -lefm32gg -Llib 
+arm-none-eabi-objcopy -O binary ex2.elf ex2.bin
 
-Makefile:25: recipe for target 'upload' failed
-make: [upload] Error 255 (ignored)
-
-03:15:37 Build Finished (took 2s.270ms)
+04:37:13 Build Finished (took 589ms)
 

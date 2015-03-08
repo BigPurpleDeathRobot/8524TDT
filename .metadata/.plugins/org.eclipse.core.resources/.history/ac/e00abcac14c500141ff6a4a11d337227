@@ -1,0 +1,21 @@
+/*
+ * sound_effect.h
+ *
+ *  Created on: Mar 7, 2015
+ *      Author: admin
+ */
+
+#ifndef SOUND_EFFECT_H_
+#define SOUND_EFFECT_H_
+
+typedef struct
+{
+  uint16_t note_count;
+  uint16_t note_duration;
+  square_note_t sq1_notes[];
+
+} sound_t;
+
+extern sound_t test;
+
+#endif /* SOUND_EFFECT_H_ */

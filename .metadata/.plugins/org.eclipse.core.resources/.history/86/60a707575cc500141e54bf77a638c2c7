@@ -1,0 +1,108 @@
+/*
+ * synthesizer.c
+ *
+ *  Created on: Mar 7, 2015
+ *      Author: Dr. Satan
+ */
+
+#include "synthesizer.h"
+
+#include <stdio.h>
+#include <stdint.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <math.h>
+
+/*
+ * Square wave generator
+ */
+
+static uint16_t initialSquareWavePeriod;
+static uint16_t square1_period_end;
+static uint16_t square1_duty_cycle;
+static int32_t square1_duration;
+static uint16_t square1_amp_begin;
+static uint16_t square1_amp_end;
+
+static uint16_t square1_half_period;
+static uint16_t square1_amplitude;
+static uint16_t square1_direction;
+static uint16_t square1_sample_idx;
+static int32_t square1_progress;
+
+/*private func declarations*/
+static uint16_t square1_get_sample();
+
+void generateSquareWave(square_wave_synth_t note)
+{
+    uint16_t old_period_end = square1_period_end;
+
+    initialSquareWavePeriod = note.initialPeriod / (1 << note.octave);
+    square1_period_end = note.lastPeriod / (1 << note.octave);
+    square1_duty_cycle = note.dutyCycle;
+    square1_duration = (note.duration ? note.duration : 1);
+    square1_amp_begin = (note.initialAmplitide>MAX_AMPLITUDE) ? (note.initialAmplitide = MAX_AMPLITUDE) : note.initialAmplitide;
+    square1_amp_end = (note.lastAmplitide>MAX_AMPLITUDE) ? (note.lastAmplitide = MAX_AMPLITUDE) : note.lastAmplitide;
+
+
+    if (initialSquareWavePeriod != old_period_end)
+    {
+        square1_half_period = (initialSquareWavePeriod * square1_duty_cycle) / 100;
+        square1_amplitude = square1_amp_begin;
+        square1_direction = !square1_direction;
+        square1_sample_idx = 0;
+    }
+    square1_progress = 0;
+}
+
+static uint16_t bias;
+
+uint16_t square1_get_sample()
+{
+
+    uint16_t sample;
+    sample = (square1_direction ? square1_amplitude : 0);
+    bias -= square1_amplitude / 2;
+
+    square1_sample_idx++;
+    square1_progress++;
+    if (square1_sample_idx >= square1_half_period)
+    {
+        square1_sample_idx = 0;
+        square1_direction = !square1_direction;
+
+        int16_t period_diff = square1_period_end - initialSquareWavePeriod;
+        uint16_t new_period = initialSquareWavePeriod + (period_diff * square1_progress) / square1_duration;
+        square1_half_period = (square1_direction ?
+            (new_period * square1_duty_cycle) / 100 :
+            new_period - (new_period * square1_duty_cycle) / 100);
+
+        int16_t amp_diff = square1_amp_end - square1_amp_begin;
+        square1_amplitude = square1_amp_begin + (amp_diff * square1_progress) / square1_duration;
+    }
+
+    return sample;
+}
+
+
+
+uint16_t getSample()
+{
+    uint16_t sample = 0;
+    bias = MAX_BIAS;
+    sample += square1_get_sample();
+    sample += bias;
+
+    return sample;
+}
+
+///* create one period at a given freq */
+/* create one period at a given freq */
+uint16_t sineWave(uint16_t freq, uint16_t sample)
+{
+  uint16_t buffer;
+  
+  buffer = (uint16_t) 1024 * (1 + sin((2*3.14159265359*sample*freq)/44100));
+  return buffer;
+
+}

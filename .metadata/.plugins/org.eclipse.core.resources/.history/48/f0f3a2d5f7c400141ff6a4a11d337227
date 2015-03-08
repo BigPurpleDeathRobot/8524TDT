@@ -1,0 +1,61 @@
+/*
+ * synthesizer.c
+ *
+ *  Created on: Mar 7, 2015
+ *      Author: Dr. Satan
+ */
+
+#include <stdio.h>
+
+/*
+ * Square wave generator 1
+ */
+
+static uint16_t square1_period_begin;
+static uint16_t square1_period_end;
+static uint16_t square1_duty_cycle;
+static int32_t square1_duration;
+static uint16_t square1_amp_begin;
+static uint16_t square1_amp_end;
+
+static uint16_t square1_half_period;
+static uint16_t square1_amplitude;
+static uint16_t square1_direction;
+static uint16_t square1_sample_idx;
+static int32_t square1_progress;
+
+void square1_play_note(square_note_t note)
+{
+    uint16_t old_period_end = square1_period_end;
+
+    square1_period_begin = note.period_begin / (1 << note.octave);
+    square1_period_end = note.period_end / (1 << note.octave);
+    square1_duty_cycle = note.duty_cycle;
+    square1_duration = (note.duration ? note.duration : 1);
+    square1_amp_begin = clamp(note.amp_begin);
+    square1_amp_end = clamp(note.amp_end);
+
+    if (square1_period_begin != old_period_end)
+    {
+        square1_half_period = (square1_period_begin * square1_duty_cycle) / 100;
+        square1_amplitude = square1_amp_begin;
+        square1_direction = !square1_direction;
+        square1_sample_idx = 0;
+    }
+    square1_progress = 0;
+}
+
+uint16_t clamp(uint16_t amplitude)
+{
+    if (amplitude > MAX_AMPLITUDE_PER_CHANNEL)
+    {
+        amplitude = MAX_AMPLITUDE_PER_CHANNEL;
+    }
+    return amplitude;
+}
+
+
+void generateSquareWave (int amp, int freq)
+{
+
+}

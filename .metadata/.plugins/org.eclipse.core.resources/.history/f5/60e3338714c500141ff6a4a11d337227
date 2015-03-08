@@ -1,0 +1,124 @@
+
+#include <stdint.h>
+#include <stdbool.h>
+
+#include "efm32gg.h"
+#include "proto.h"
+
+/* The period between sound samples, in clock cycles
+ ** for now set to 44.1kHz (might want to do less; perhaps 8kHz because of size and DAC
+ ** might only be able to handle a couple of seconds)
+ ** 14MHz/44.1kHz = 317.46
+ * */
+#define   SAMPLE_PERIOD   65535
+//static const uint16_t SAMPLE_PERIOD = 318;//move this to timer.c?
+
+/* Declaration of peripheral setup functions */
+static void setupNVIC();
+static void setupSleepMode(uint8_t);
+
+/* Your mama will start executing here */
+int main(void) 
+{  
+
+  setupGPIO();
+  setupDAC();
+  setupTimer(SAMPLE_PERIOD);
+
+  setupSleepMode(2);
+
+  setupNVIC();
+  /*below should be moved to future sound_effect.c or similar*/
+
+
+  
+  //while(1);
+
+  __asm__("wfi");
+
+  return 0;
+}
+
+void setupNVIC()
+{
+	/* TODO use the NVIC ISERx registers to enable handling of interrupt(s)
+	 remember two things are necessary for interrupt handling:
+	  - the peripheral must generate an interrupt signal
+	  - the NVIC must be configured to make the CPU handle the signal
+	 You will need TIMER1, GPIO odd and GPIO even interrupt handling for this
+	 assignment.
+	*/
+
+	*ISER0 = 0x1802;
+}
+
+
+void setupSleepMode(uint8_t arg)
+{
+	/*
+	The SCR controls features of entry to and exit from low power state.
+	arg = 0 only sleep
+	arg = 2 enables sleep-on-exit when returning from Handler mode to Thread mode
+	arg = 6 enables sleep-on-exit and deep sleep mode
+
+	*/
+
+	*SCR = arg;
+}
+
+
+/* if other interrupt handlers are needed, use the following names: 
+   NMI_Handler
+   HardFault_Handler
+   MemManage_Handler
+   BusFault_Handler
+   UsageFault_Handler
+   Reserved7_Handler
+   Reserved8_Handler
+   Reserved9_Handler
+   Reserved10_Handler
+   SVC_Handler
+   DebugMon_Handler
+   Reserved13_Handler
+   PendSV_Handler
+   SysTick_Handler
+   DMA_IRQHandler
+   GPIO_EVEN_IRQHandler
+   TIMER0_IRQHandler
+   USART0_RX_IRQHandler
+   USART0_TX_IRQHandler
+   USB_IRQHandler
+   ACMP0_IRQHandler
+   ADC0_IRQHandler
+   DAC0_IRQHandler
+   I2C0_IRQHandler
+   I2C1_IRQHandler
+   GPIO_ODD_IRQHandler
+   TIMER1_IRQHandler
+   TIMER2_IRQHandler
+   TIMER3_IRQHandler
+   USART1_RX_IRQHandler
+   USART1_TX_IRQHandler
+   LESENSE_IRQHandler
+   USART2_RX_IRQHandler
+   USART2_TX_IRQHandler
+   UART0_RX_IRQHandler
+   UART0_TX_IRQHandler
+   UART1_RX_IRQHandler
+   UART1_TX_IRQHandler
+   LEUART0_IRQHandler
+   LEUART1_IRQHandler
+   LETIMER0_IRQHandler
+   PCNT0_IRQHandler
+   PCNT1_IRQHandler
+   PCNT2_IRQHandler
+   RTC_IRQHandler
+   BURTC_IRQHandler
+   CMU_IRQHandler
+   VCMP_IRQHandler
+   LCD_IRQHandler
+   MSC_IRQHandler
+   AES_IRQHandler
+   EBI_IRQHandler
+   EMU_IRQHandler
+*/

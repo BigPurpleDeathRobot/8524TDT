@@ -2,41 +2,38 @@
 #include <stdbool.h>
 
 #include "efm32gg.h"
-#include "proto.h"
+
+/* The period between sound samples, in clock cycles
+ ** for now set to 44.1kHz ** 14MHz/44.1kHz = 317.46
+ * */
+#define SAMPLE_PERIOD 317 /* ~44100 samples per second */
+//#define   SAMPLE_PERIOD   65535
 
 /* function to setup the timer */
-void setupTimer(uint16_t samplePeriod)
+void setupTimer()
 {
-  /*
-    TODO enable and set up the timer
-    
-    1. Enable clock to timer by setting bit 6 in CMU_HFPERCLKEN0
-    2. Write the period to register TIMER1_TOP
-    3. Enable timer interrupt generation by writing 1 to TIMER1_IEN
-    4. Start the timer by writing 1 to TIMER1_CMD
-    
-    This will cause a timer interrupt to be generated every (period) cycles. Remember to configure the NVIC as well, otherwise the interrupt handler will not be invoked.
-  */  
-
-	*CMU_HFPERCLKEN0 |= CMU2_HFPERCLKEN0_TIMER1; /* enable TIMER1 clock */
-	*TIMER1_CTRL |= 8 << 24; /* DIV256 for testing */
-	*TIMER1_TOP = samplePeriod; /* set counter top value */
-	*TIMER1_IEN = 1; /* enable overflow interrupt */
-	*TIMER1_CMD = 1; /* start timer */
-}
-
-void startTimer()
-{
-    *TIMER1_CMD = 1;
-}
-
-void stopTimer()
-{
-    *TIMER1_CMD = 0;
+  *CMU_HFPERCLKEN0 |= CMU2_HFPERCLKEN0_TIMER1; /* enable TIMER1 clock */
+  *TIMER1_TOP = SAMPLE_PERIOD; /* set counter top value */
+  *TIMER1_IEN = 1; /* enable overflow interrupt */
+  *TIMER1_CMD = 1; /* start timer */
+  //*TIMER1_CTRL |= 8 << 24; /* DIV256 for testing */
 }
 
 void disableTimer()
 {
-    *TIMER1_CMD = 0;
-    *CMU_HFPERCLKEN0 &= ~CMU2_HFPERCLKEN0_TIMER1;
+  *CMU_HFPERCLKEN0 &= ~CMU2_HFPERCLKEN0_TIMER1; /* disable TIMER1 clock */
+  *TIMER1_CMD = 0; /* stop timer */
 }
+
+void setupLEtimer()
+{
+  *CMU_HFCORECLKEN0 |= (1 << 4); /* enable the clock for Low Energy Peripherals */
+  *CMU_LFACLKEN0 |= CMU2_LFACLKEN0_LETIMER0; /* enable LFACLK for LETIMER0 */
+  *CMU_OSCENCMD = (1 << 6); /* enables LFRCO, default osc for LFACLK */
+  *LETIMER0_CTRL |= (1 << 9); /* set COMP0 as top value */
+  *LETIMER0_COMP0 = 32768/44100; /* set top value */
+  *LETIMER0_IEN = 1; /* enable interrupt on the COMP0 interrupt flag */
+  *LETIMER0_CMD = 1; /* start timer */
+}
+
+

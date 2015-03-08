@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;ex2-eclipse-makefile/synth.c&apos; to &apos;synthesizer.c&apos;" description="Rename resource &apos;synth.c&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="synth.c" name="synthesizer.c" stamp="1425750672116" updateReferences="true"/>
+</session>

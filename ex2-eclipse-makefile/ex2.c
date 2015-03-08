@@ -1,57 +1,40 @@
-
 #include <stdint.h>
 #include <stdbool.h>
 
 #include "efm32gg.h"
 #include "proto.h"
 
-/* The period between sound samples, in clock cycles
- ** for now set to 44.1kHz (might want to do less; perhaps 8kHz because of size and DAC
- ** might only be able to handle a couple of seconds)
- ** 14MHz/44.1kHz = 317.46
- * */
-#define   SAMPLE_PERIOD   65535
-//static const uint16_t SAMPLE_PERIOD = 318;//move this to timer.c?
 
 /* Declaration of peripheral setup functions */
 static void setupNVIC();
 static void setupSleepMode(uint8_t);
 
+
 /* Your mama will start executing here */
 int main(void) 
-{  
-
+{
+  /* Call the peripheral setup functions */
   setupGPIO();
   setupDAC();
-  setupTimer(SAMPLE_PERIOD);
-
-  setupSleepMode(2);
-
-  setupNVIC();
-  /*below should be moved to future sound_effect.c or similar*/
-
-
+  setupTimer();
+  //setupLEtimer();
   
-  //while(1);
-
+  /* Enable interrupt handling */
+  setupNVIC();
+  
+  /* set sleep mode */
+  setupSleepMode(2);
+  
+  /* in his house at R'lyeh, dead Cthulhu waits dreaming */
   __asm__("wfi");
-
-  return 0;
+  
 }
 
 void setupNVIC()
 {
-	/* TODO use the NVIC ISERx registers to enable handling of interrupt(s)
-	 remember two things are necessary for interrupt handling:
-	  - the peripheral must generate an interrupt signal
-	  - the NVIC must be configured to make the CPU handle the signal
-	 You will need TIMER1, GPIO odd and GPIO even interrupt handling for this
-	 assignment.
-	*/
-
-	*ISER0 = 0x1802;
+  *ISER0 = 0x1802;
+  //*ISER0 = 0x4000802;
 }
-
 
 void setupSleepMode(uint8_t arg)
 {

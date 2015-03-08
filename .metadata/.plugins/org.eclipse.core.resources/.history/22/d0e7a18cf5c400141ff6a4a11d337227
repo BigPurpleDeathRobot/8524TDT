@@ -1,0 +1,31 @@
+/*
+ * synthesizer.c
+ *
+ *  Created on: Mar 7, 2015
+ *      Author: satan
+ */
+
+
+/*
+ * Square wave generator 2
+ */
+
+static uint16_t square2_period_begin;
+static uint16_t square2_period_end;
+static uint16_t square2_duty_cycle;
+static int32_t square2_duration;
+static uint16_t square2_amp_begin;
+static uint16_t square2_amp_end;
+
+static uint16_t square2_half_period;
+static uint16_t square2_amplitude;
+static uint16_t square2_direction;
+static uint16_t square2_sample_idx;
+static int32_t square2_progress;
+
+
+
+void generateSquareWave (int amp, int freq)
+{
+
+}

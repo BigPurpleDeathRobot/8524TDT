@@ -1,46 +1,84 @@
 #include <stdint.h>
 #include <stdbool.h>
+#include <stdlib.h>
 
 #include "efm32gg.h"
 #include "proto.h"
+#include "synthesizer.h"
+#include "sound_effect.h"
+#include "sound/sineTones.h"
 
-///*define what sound mode to trigger*/
-//const typedef enum {SONG, SOUND_EFFECT} sound_mode_t;
-//static const sound_mode_t SOUND_MODE;
-//
-///*example sound effects to be made (should be moved to synthesizer .c-file)*/
-//const typedef enum {INTRO_SONG, THEME_SONG, CANNON_FIRE, EXPLOSION,
-//							GAME_OVER} sound_t;
+
+/*define what sound mode to trigger*/
+const typedef enum {SONG, SOUND_EFFECT} sound_mode_t;
+static const sound_mode_t SOUND_MODE=SOUND_EFFECT;
+
+static volatile uint16_t synthesizing = 0;
+static volatile int16_t noteIndex = -1;
+static volatile uint16_t sampleIndex = 0;
+static volatile uint16_t sample = 0;
+static volatile sound_effect_t currentSoundEffect;
+static volatile uint16_t testBoom= 0;
 
 
 /*private function declarations*/
 static void handleGamepad();
 
 
-
 /* TIMER1 interrupt handler */
 void __attribute__ ((interrupt)) TIMER1_IRQHandler() 
 {  
-  /*
-    TODO feed new samples to the DAC
-    remember to clear the pending interrupt by writing 1 to TIMER1_IFC
-  */  
+  *TIMER1_IFC = *TIMER1_IF; /* clear interrupt flag */
+  currentSoundEffect=test;
+  
+	switch (SOUND_MODE)
+	{
+		case SONG:
+			//TODO:-->load_song(); here?
+			break;
+		case SOUND_EFFECT:
+			if (sampleIndex % currentSoundEffect.synthesisLength == 0) // Check if sample is done
+			{
+				sampleIndex = 0;
+				noteIndex++;
+				if (noteIndex < currentSoundEffect.notes) // Check if there are more notes to play
+				{
+					// Prepare next note
+					generateSquareWave(currentSoundEffect.synthesizeData[noteIndex]);
 
-	*TIMER1_IFC = *TIMER1_IF; /* clear interrupt flag */
-	*GPIO_PA_DOUT = ~*GPIO_PA_DOUT;/*test*/
+				}
+				else
+				{
+					/*go back to sleep or whatever...*/
+					*GPIO_PA_DOUT = 0xFF00;
+					synthesizing = 0;
+					*TIMER1_CMD = 2;
+					*DAC0_CH0CTRL = 0;
+					*DAC0_CH1CTRL = 0;
+					*SCR = 0b0110;
+				}
+			}
+			break;
+	}
+	// Get next sample and write do DAC
+	sample = getSample();
+	sampleIndex++;
+  
+	dataDAC(sample);
+  
+	/*TODO: interface sinus below with square: shall be selectable by doing currentSoundEffect=boom;*/
+ // dataDac(boom[test_boom]);
+ // test_boom++;
+ // if (testBoom== boomLen)
+    //test = 0;
+ //   disableDAC();
+}
 
-	/*TODO play intro song and/or sound effects!!*/
-
-//	switch (SOUND_MODE)
-//	{
-//		case SONG:
-//			//load_song();//TODO: just a thought
-//			break;
-//		case SOUND_EFFECT:
-//			//load_sound_effect();
-//			break;
-//	}
-
+/* LETIMER0 interrupt handler */
+void __attribute__ ((interrupt)) LETIMER0_IRQHandler() 
+{  
+  *LETIMER0_IFC = *LETIMER0_IF; /* clear interrupt flag */
+  /* TODO IF TIME */
 }
 
 /* GPIO even pin interrupt handler */
@@ -61,7 +99,7 @@ void __attribute__ ((interrupt)) GPIO_ODD_IRQHandler()
 void handleGamepad()
 {
 	LEDupdateGPIO();/*test*/
-
+//	currentSoundEffect=test;
 	/*TODO: should map button to variable/enum by reading from either
 	 * DIN or interrupt flag register. Then use a switch case:*/
 
