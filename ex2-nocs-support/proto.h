@@ -3,12 +3,19 @@
 
 /* Declaration of function prototypes */
 
+// PLAYER
+typedef enum {explosion, laser, powerup, jump, song} sfx;
+void play(sfx selected);
+
 // GPIO
 void setupGPIO();
+void gpioHandler(volatile sfx *test);
 
 // TIMER
 void setupTimer();
+void disableTimer();
 void setupLEtimer();
+void disableLEtimer();
 
 // DAC
 void setupDAC();
@@ -20,10 +27,5 @@ void setupNVIC();
 
 // MISC
 void setupSleepMode(uint8_t foo);
-uint16_t sineWave(uint16_t freq, uint16_t sample);
-
-
-// SOME SOUNDS FOR TESTING
-
 
 #endif

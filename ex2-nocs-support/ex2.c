@@ -9,9 +9,6 @@ int main(void)
 {
   /* Call the peripheral setup functions */
   setupGPIO();
-  setupDAC();
-  setupTimer();
-  //setupLEtimer();
   
   /* Enable interrupt handling */
   setupNVIC();
@@ -26,8 +23,9 @@ int main(void)
 
 void setupNVIC()
 {
-  *ISER0 = 0x1802;
-  //*ISER0 = 0x4000802;
+  /* TIMER1 does not work in deep sleep mode */
+  *ISER0 = 0x1802; /* enable interrupt for TIMER1, GPIO EVEN and ODD */
+  //*ISER0 = 0x4000802; /* enable interrupt for LETIMER0, GPIO EVEN and ODD */
 }
 
 void setupSleepMode(uint8_t foo)

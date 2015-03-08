@@ -2,6 +2,7 @@
 #include <stdbool.h>
 
 #include "efm32gg.h"
+#include "proto.h"
 
 /* function to set up GPIO mode and interrupts*/
 void setupGPIO()
@@ -22,4 +23,35 @@ void setupGPIO()
   *GPIO_IEN = 0xff; /* pin in external interrupt enabled */
 }
 
+void gpioHandler(volatile sfx *selectSfx)
+{
+  switch(*GPIO_PC_DIN)
+  {
+    case 0xfe:
+      setupDAC();
+      setupTimer();
+      *selectSfx = explosion;
+      break;
+    case 0xfd:
+      setupDAC();
+      setupTimer();
+      *selectSfx = laser;
+      break;
+    case 0xfb:
+      setupDAC();
+      setupTimer();
+      *selectSfx = powerup;
+      break;
+    case 0xf7:
+      setupDAC();
+      setupTimer();
+      *selectSfx = jump;
+      break;
+    case 0xef:
+      setupDAC();
+      setupTimer();
+      *selectSfx = song;
+      break;
+  }
+}
 

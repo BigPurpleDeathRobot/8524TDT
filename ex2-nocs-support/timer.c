@@ -31,4 +31,12 @@ void setupLEtimer()
   *LETIMER0_CMD = 1; /* start timer */
 }
 
+void disableLEtimer()
+{
+  *CMU_HFCORECLKEN0 &= ~(1 << 4); /* disable the clock for Low Energy Peripherals */
+  *CMU_LFACLKEN0 |= 0; /* disable LFACLK for LETIMER0 */
+  *CMU_OSCENCMD = (1 << 7); /* disable LFRCO, default osc for LFACLK */
+  *LETIMER0_CMD = 0; /* stop timer */
+}
+
 
