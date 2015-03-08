@@ -16,16 +16,23 @@ int main(void)
   /* set sleep mode */
   setupSleepMode(2);
   
+  /* use to run in EM1 and EM2
   /* in his house at R'lyeh, dead Cthulhu waits dreaming */
   __asm__("wfi");
+  
+  /* use to run in EM0: Run Mode
   //while(1);
   
 }
+
+/* remember to switch out setupTimer()/disableTimer with setupLEtimer()/disableLEtimer 
+ * in gpio.c, player.c and synthesizer.c when running in EM2 */ 
 
 void setupNVIC()
 {
   /* TIMER1 does not work in deep sleep mode */
   *ISER0 = 0x1802; /* enable interrupt for TIMER1, GPIO EVEN and ODD */
+  /* use for deep sleep, EM2 */
   //*ISER0 = 0x4000802; /* enable interrupt for LETIMER0, GPIO EVEN and ODD */
 }
 
