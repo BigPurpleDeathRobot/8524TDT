@@ -6,21 +6,6 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <stdlib.h>
-#include <math.h>
-
-/*
- * Sine wave generator [work in progress...]
- */
-///* create one period at a given freq */
-/* create one period at a given freq */
-uint16_t generateSineWave(uint16_t freq, uint16_t sample)
-{
-  uint16_t buffer;
-
-  buffer = (uint16_t) 1024 * (1 + sin((2*3.14159265359*sample*freq)/44100));
-  return buffer;
-
-}
 
 /*
  * Square wave generator
@@ -97,7 +82,7 @@ uint16_t getGeneratedSquareWaveSample()
 
 uint16_t getSample()
 {
-	bias = MAX_BIAS;
+    bias = MAX_BIAS;
     uint16_t sample = 0;
     sample += getGeneratedSquareWaveSample();
     sample += bias;
@@ -122,7 +107,7 @@ void synthesize(uint8_t amplitude)
 				{
 					synthesizing = 0;
           disableDAC();
-          disableTimer();
+          disableLEtimer();
           noteIndex = -1;
 				}
 			}

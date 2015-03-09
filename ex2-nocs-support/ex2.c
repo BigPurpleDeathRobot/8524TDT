@@ -14,7 +14,7 @@ int main(void)
   setupNVIC();
   
   /* set sleep mode */
-  setupSleepMode(2);
+  setupSleepMode(6);
   
   /* use to run in EM1 and EM2 */
   /* in his house at R'lyeh, dead Cthulhu waits dreaming */
@@ -22,7 +22,6 @@ int main(void)
   
   /* use to run in EM0: Run Mode */
   //while(1);
-  
 }
 
 //remember to switch out setupTimer()/disableTimer with setupLEtimer()/disableLEtimer 
@@ -31,9 +30,9 @@ int main(void)
 void setupNVIC()
 {
   /* TIMER1 does not work in deep sleep mode */
-  *ISER0 = 0x1802; /* enable interrupt for TIMER1, GPIO EVEN and ODD */
+  //*ISER0 = 0x1802; // enable interrupt for TIMER1, GPIO EVEN and ODD */
   /* use for deep sleep, EM2 */
-  //*ISER0 = 0x4000802; /* enable interrupt for LETIMER0, GPIO EVEN and ODD
+  *ISER0 = 0x4000802; // enable interrupt for LETIMER0, GPIO EVEN and ODD
 }
 
 void setupSleepMode(uint8_t foo)

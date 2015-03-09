@@ -15,8 +15,6 @@ static volatile uint8_t amplitude = 200;
 /* TIMER1 interrupt handler */
 void __attribute__ ((interrupt)) TIMER1_IRQHandler() 
 {  
-  *TIMER1_IFC = *TIMER1_IF; /* clear interrupt flag */  
-	
   switch (sound_source)
 	{
 		case sampleplayer:
@@ -26,12 +24,13 @@ void __attribute__ ((interrupt)) TIMER1_IRQHandler()
       synthesize(amplitude);
       break;
 	}
+  *TIMER1_IFC = 0xff; /* clear interrupt flag */
 }
 
 /* LETIMER0 interrupt handler */
 void __attribute__ ((interrupt)) LETIMER0_IRQHandler() 
 {  
-  *LETIMER0_IFC = *LETIMER0_IF; /* clear interrupt flag */
+  *LETIMER0_IFC = 1; /* clear interrupt flag */
     switch (sound_source)
 	{
 		case sampleplayer:
@@ -47,16 +46,16 @@ void __attribute__ ((interrupt)) LETIMER0_IRQHandler()
 void __attribute__ ((interrupt)) GPIO_EVEN_IRQHandler() 
 {
     /* TODO handle button pressed event, remember to clear pending interrupt */
-    *GPIO_IFC = *GPIO_IF; /* clear interrupt flag */
     gpioHandler(&selectSfx, &sound_source, &amplitude);
     *GPIO_PA_DOUT = *GPIO_PC_DIN << 8;
+    *GPIO_IFC = 0xff; /* clear interrupt flag */
 }
 
 /* GPIO odd pin interrupt handler */
 void __attribute__ ((interrupt)) GPIO_ODD_IRQHandler() 
 {
     /* TODO handle button pressed event, remember to clear pending interrupt */
-    *GPIO_IFC = *GPIO_IF; /* clear interrupt flag */
     gpioHandler(&selectSfx, &sound_source, &amplitude);
     *GPIO_PA_DOUT = *GPIO_PC_DIN << 8;
+    *GPIO_IFC = 0xff; /* clear interrupt flag */
 }

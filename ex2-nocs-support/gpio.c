@@ -29,31 +29,31 @@ void gpioHandler(volatile sfx *selectSfx, volatile sound_source_t *selectSource,
   {
     case 0xfe:
       setupDAC();
-      setupTimer();
+      setupLEtimer();
       *selectSfx = explosion;
       *selectSource = sampleplayer;
       break;
     case 0xfd:
       setupDAC();
-      setupTimer();
+      setupLEtimer();
       *selectSfx = laser;
       *selectSource = sampleplayer;
       break;
     case 0xfb:
       setupDAC();
-      setupTimer();
+      setupLEtimer();
       *selectSfx = powerup;
       *selectSource = sampleplayer;
       break;
     case 0xf7:
       setupDAC();
-      setupTimer();
+      setupLEtimer();
       *selectSfx = jump;
       *selectSource = sampleplayer;
       break;
     case 0xef:
       setupDAC();
-      setupTimer();
+      setupLEtimer();
       *selectSfx = song;
       *selectSource = sampleplayer;
       break;
@@ -64,7 +64,7 @@ void gpioHandler(volatile sfx *selectSfx, volatile sound_source_t *selectSource,
       break;
     case 0xbf:
       setupDAC();
-      setupTimer();
+      setupLEtimer();
       *selectSource = synthesizer;
       break;
     case 0x7f:

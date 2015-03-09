@@ -18,6 +18,7 @@ void disableTimer()
 {
   *CMU_HFPERCLKEN0 &= ~CMU2_HFPERCLKEN0_TIMER1; /* disable TIMER1 clock */
   *TIMER1_CMD = 0; /* stop timer */
+  *TIMER1_IEN = 0;
 }
 
 void setupLEtimer()
@@ -35,8 +36,9 @@ void disableLEtimer()
 {
   *CMU_HFCORECLKEN0 &= ~(1 << 4); /* disable the clock for Low Energy Peripherals */
   *CMU_LFACLKEN0 |= 0; /* disable LFACLK for LETIMER0 */
-  *CMU_OSCENCMD = (1 << 7); /* disable LFRCO, default osc for LFACLK */
+  *CMU_OSCENCMD = (1 << 7); /* disable LFRCO*/
   *LETIMER0_CMD = 0; /* stop timer */
+  *LETIMER0_IEN = 0;
 }
 
 

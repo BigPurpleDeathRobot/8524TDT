@@ -79,12 +79,12 @@
 
 #define LETIMER0_BASE 0x40082000
 
-#define LETIMER0_CTRL  ((volatile uint32_t*)(LETIMER0_BASE + 0x00))
-#define LETIMER0_CMD   ((volatile uint32_t*)(LETIMER0_BASE + 0x04))
-#define LETIMER0_COMP0 ((volatile uint32_t*)(LETIMER0_BASE + 0x10))
-#define LETIMER0_IF    ((volatile uint32_t*)(LETIMER0_BASE + 0x20))
-#define LETIMER0_IFC   ((volatile uint32_t*)(LETIMER0_BASE + 0x28))
-#define LETIMER0_IEN   ((volatile uint32_t*)(LETIMER0_BASE + 0x2c))
+#define LETIMER0_CTRL  ((volatile uint32_t*)(LETIMER0_BASE + 0x000))
+#define LETIMER0_CMD   ((volatile uint32_t*)(LETIMER0_BASE + 0x004))
+#define LETIMER0_COMP0 ((volatile uint32_t*)(LETIMER0_BASE + 0x010))
+#define LETIMER0_IF    ((volatile uint32_t*)(LETIMER0_BASE + 0x020))
+#define LETIMER0_IFC   ((volatile uint32_t*)(LETIMER0_BASE + 0x028))
+#define LETIMER0_IEN   ((volatile uint32_t*)(LETIMER0_BASE + 0x02c))
 
 
 // NVIC

@@ -63,10 +63,8 @@ void player(sfx selected, uint8_t amplitude)
     else
     {
       sample = 0;
-    disableDAC();
-    disableTimer();
-    return;
+      disableDAC();
+      disableLEtimer();
     }
   }
-  
 }
