@@ -1,10 +1,3 @@
-/*
- * synthesizer.h
- *
- *  Created on: Mar 7, 2015
- *      Author: admin
- */
-
 #ifndef SYNTHESIZER_H_
 #define SYNTHESIZER_H_
 

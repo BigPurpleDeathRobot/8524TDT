@@ -1,9 +1,3 @@
-/*
- * sound_effect.c
- *
- *  Created on: Mar 7, 2015
- *      Author: kaptein kuk
- */
 #include "sound_effect.h"
 //#include "synthesizer.h"
 

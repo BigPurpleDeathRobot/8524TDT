@@ -1,10 +1,3 @@
-/*
- * sound_effect.h
- *
- *  Created on: Mar 7, 2015
- *      Author: admin
- */
-
 #ifndef SOUND_EFFECT_H_
 #define SOUND_EFFECT_H_
 

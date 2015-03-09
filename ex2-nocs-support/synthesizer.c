@@ -1,10 +1,3 @@
-/*
- * synthesizer.c
- *
- *  Created on: Mar 7, 2015
- *      Author: Dr. Satan
- */
-
 #include "synthesizer.h"
 #include "sound_effect.h"
 #include "proto.h"
