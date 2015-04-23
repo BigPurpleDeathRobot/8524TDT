@@ -19,7 +19,7 @@
 #define DOWN 8
 
 
-// DIRTY DIRTY GLOBALS //
+//// DIRTY DIRTY GLOBALS ////
 uint8_t map[MAP_WIDTH][MAP_HEIGHT];
 
 uint16_t snakePos[MAP_SIZE] = {261, 260, 259, 258};
@@ -61,6 +61,7 @@ void placeFood(void){
 			for(int x = 0; x < MAP_WIDTH; x++){
 				if(map[x][y] == 2){
 					drawRectangle(x*10, (y*10)+10, (x*10)+9, (y*10)+19, GREEN);
+					displayUpdate(x*10, (y*10)+10, 10, 10);	
 				}
 			}
 		}	
@@ -122,9 +123,11 @@ void drawSnake(void){
 	uint16_t x = snakePos[0]%32;
 	uint16_t y = snakePos[0]/32;
 	drawRectangle(x*10, (y*10)+10, (x*10)+9, (y*10)+19, WHITE);
+	displayUpdate(x*10, (y*10)+10, 10, 10);
 	x = prevtailPos%32;
 	y = prevtailPos/32;
-	drawRectangle(x*10, (y*10)+10, (x*10)+9, (y*10)+19, BLACK);	
+	drawRectangle(x*10, (y*10)+10, (x*10)+9, (y*10)+19, BLACK);
+	displayUpdate(x*10, (y*10)+10, 10, 10);		
 }
 
 // collision detection and handling
@@ -133,7 +136,6 @@ uint8_t collisionDetect(void){
 	uint8_t y = snakePos[0]/32;
 	// collision with food
 	if((foodx == x) && (foody == y)){
-		printf("Food eaten!\n");
 		map[foodx][foody] = 0;
 		foodEaten = 1;
 		snakeLen++;
@@ -142,9 +144,9 @@ uint8_t collisionDetect(void){
 	// collision with self
 	for(int i = 1; i < snakeLen; i++){
 		if(snakePos[0] == snakePos[i]){
-			drawRectangle(0, 10, 319, 239, BLACK);
+			drawRectangle(0, 10, DISPLAY_WIDTH, DISPLAY_HEIGHT, BLACK);
 			drawText("You Have Died!", 104, 110);
-			displayUpdate();
+			displayUpdate(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);
 			return -1;
 		}
 	}
@@ -153,27 +155,27 @@ uint8_t collisionDetect(void){
 
 void updateScore(void){
 	sprintf(scoreChar, "%03u", score);
-	drawRectangle(296, 0, 320, 8, BLACK);
+	drawRectangle(296, 0, DISPLAY_WIDTH, 8, BLACK);
 	drawText(scoreChar, 296, 0);
+	displayUpdate(296, 0, 3*FONT_WIDTH, FONT_HEIGHT);
 }
 
 // init snake
 void initSnake(void){
 	
-	memset(&map, 0, sizeof map);	
+	memset(&map, 0, sizeof map); // fill map with zeros	
 	placeSnake();
 	drawBackground(BLACK);
 	drawText("Score: ", 240, 0);
 	sprintf(scoreChar, "%03u", score);
-	drawText(scoreChar, 296, 0);	
+	drawText(scoreChar, 296, 0);
+	displayUpdate(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);	
 	// draw the initial snake
 	for(int y = 0; y < MAP_HEIGHT; y++){
 		for(int x = 0; x < MAP_WIDTH; x++){
 			if(map[x][y] == 1){
 				drawRectangle(x*10, (y*10)+10, (x*10)+9, (y*10)+19, WHITE);
-			}
-			if(map[x][y] == 0){
-				drawRectangle(x*10, (y*10)+10, (x*10)+9, (y*10)+19, BLACK);
+				displayUpdate(x*10, (y*10)+10, 10, 10);
 			}
 		}
 	}	
@@ -181,29 +183,24 @@ void initSnake(void){
 
 int main(int argc, char *argv[])
 {
-	printf("Hello Overlord, input and display test\n");
+	printf("Hello Overlord, input and display test in the form of snake\n");
 
 	srand(time(NULL));	
 	
 	displayInit();
 	initSnake();
-	displayUpdate();
 	usleep(100000);
 
 	while(1){	
 		snakeDir = getInput();
 		moveSnake(snakeDir);
-		if(collisionDetect()) return 0;	
+		if(collisionDetect()) exit(EXIT_SUCCESS);	
 		placeFood();
 		placeSnake();
 		drawSnake();
 		updateScore();
-		displayUpdate();
 		usleep(100000);
 	}
 
 	exit(EXIT_SUCCESS);
 }
-
-//char cunt[4];
-//sprintf(cunt, "%i", score);

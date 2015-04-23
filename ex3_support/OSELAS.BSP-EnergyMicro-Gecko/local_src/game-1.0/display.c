@@ -10,15 +10,6 @@
 #include "display.h"
 #include "font_8x8.h"
 
-#define DISPLAY_WIDTH 320
-#define DISPLAY_HEIGHT 240
-#define DISPLAY_SIZE 320*240
-#define FRAMEBUFFER_SIZE 153600 // width*height*sizeof(uint16_t)
-
-#define FONT_WIDTH 8
-#define FONT_HEIGHT 8
-
-
 //// GLOBALS ////
 static int framebuffer_fd; // variable to open fb0 device file
 static uint16_t *fb_ptr; // holds addresses from mmap()
@@ -83,10 +74,10 @@ void drawText(char *msg, int x, int y){
 	}	
 }
 
-void displayUpdate(void){
-	rect.dx = 0;
-	rect.dy = 0;
-	rect.width = DISPLAY_WIDTH;
-	rect.height = DISPLAY_HEIGHT;
+void displayUpdate(int dx, int dy, int width, int height){
+	rect.dx = dx;
+	rect.dy = dy;
+	rect.width = width;
+	rect.height = height;
 	ioctl(framebuffer_fd, 0x4680, &rect);
 }
