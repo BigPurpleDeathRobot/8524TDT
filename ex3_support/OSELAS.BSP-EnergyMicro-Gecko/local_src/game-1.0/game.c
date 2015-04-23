@@ -69,6 +69,32 @@ void placeFood(void){
 		
 }
 
+// function for reading gamepad and setting direction according to snake rules
+uint8_t getDir(void){
+	uint8_t prevDir = snakeDir;
+	uint8_t dir = getInput();
+	if((dir == LEFT) || (dir == RIGHT) || (dir == UP) || (dir == DOWN)){
+		if((dir == LEFT) && (prevDir != RIGHT)){
+			return dir;
+		}
+		else if((dir == RIGHT) && (prevDir != LEFT)){
+			return dir;
+		}
+		else if((dir == UP) && (prevDir != DOWN)){
+			return dir;
+		}
+		else if((dir == DOWN) && (prevDir != UP)){
+			return dir;
+		}
+		else{
+			return prevDir;
+		}			
+	}
+	else{
+		return prevDir;
+	}
+}
+
 // function for moving snake, allows snake to exit one side and enter the opposite	
 void moveSnake(uint8_t direction){
 		
@@ -192,7 +218,7 @@ int main(int argc, char *argv[])
 	usleep(100000);
 
 	while(1){	
-		snakeDir = getInput();
+		snakeDir = getDir();
 		moveSnake(snakeDir);
 		if(collisionDetect()) exit(EXIT_SUCCESS);	
 		placeFood();

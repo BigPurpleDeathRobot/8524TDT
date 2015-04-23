@@ -6,7 +6,6 @@
 
 #include "input.h"
 
-uint8_t data = 4;
 int input_fd;
 char buf;
 
@@ -20,7 +19,5 @@ uint8_t getInput(void){
 		return -1;
 	}
 	close(input_fd);
-	if((uint8_t)buf != 0) data = (uint8_t)buf;
-	return data;
-	
+	return (uint8_t)buf;
 }
