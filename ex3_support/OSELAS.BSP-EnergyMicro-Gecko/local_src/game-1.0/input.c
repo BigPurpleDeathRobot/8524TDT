@@ -19,6 +19,7 @@ uint8_t getInput(void){
 		printf("error on read()\n");
 		return -1;
 	}
+	close(input_fd);
 	if((uint8_t)buf != 0) data = (uint8_t)buf;
 	return data;
 	

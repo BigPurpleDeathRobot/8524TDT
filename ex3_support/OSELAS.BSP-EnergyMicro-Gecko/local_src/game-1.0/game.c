@@ -11,7 +11,7 @@
 
 #define MAP_WIDTH 32
 #define MAP_HEIGHT 23
-#define MAP_SIZE (MAP_WIDTH*MAP_HEIGHT)
+#define MAP_SIZE MAP_WIDTH*MAP_HEIGHT
 
 #define LEFT 1
 #define UP 2
@@ -27,9 +27,12 @@ uint16_t snakeLen = 4;
 uint8_t snakeDir = RIGHT;
 uint16_t prevtailPos;
 
-static uint8_t foodx = 9;
-static uint8_t foody = 8;  
-uint8_t foodEaten = 0;
+uint8_t foodx;
+uint8_t foody;  
+uint8_t foodEaten = 1;
+
+uint16_t score = 0;
+char scoreChar[3];
 
 // function for placing snake on map
 void placeSnake(void){			 
@@ -53,45 +56,65 @@ void placeFood(void){
 		printf("foodx: %u\n", foodx);
 		printf("foody: %u\n", foody);
 		foodEaten = 0;
-	}	
-	map[foodx][foody] = 2;
-	for(int y = 0; y < MAP_HEIGHT; y++){
-		for(int x = 0; x < MAP_WIDTH; x++){
-			if(map[x][y] == 2){
-				drawRectangle(x*10, (y*10)+10, (x*10)+9, (y*10)+19, GREEN);
+		map[foodx][foody] = 2;
+		for(int y = 0; y < MAP_HEIGHT; y++){
+			for(int x = 0; x < MAP_WIDTH; x++){
+				if(map[x][y] == 2){
+					drawRectangle(x*10, (y*10)+10, (x*10)+9, (y*10)+19, GREEN);
+				}
 			}
-		}
+		}	
 	}	
+		
 }
 
-// function for moving snake	
+// function for moving snake, allows snake to exit one side and enter the opposite	
 void moveSnake(uint8_t direction){
 		
 	prevtailPos = snakePos[snakeLen-1];
 
-	for(int i = MAP_SIZE; i > 0; i--){
+	for(int i = MAP_SIZE-1; i > 0; i--){
 		if(i < snakeLen){
-			snakePos[i] = snakePos[i-1]; 	
+			snakePos[i] = snakePos[i-1];
+			printf("snakePos[%u]: %u\n",i,snakePos[i]); 	
 		}
 		else{
-			snakePos[i] = 0;
+			snakePos[i] = 13; // does not matter
+		}
+	}	
+	if(direction == LEFT){
+		if(snakePos[0]%MAP_WIDTH == 0){
+			snakePos[0] += MAP_WIDTH-1;	
+		} 
+		else{
+			snakePos[0] -= 1;
 		}
 	}
-//	for(int i=0;i<snakeLen;i++){
-//		printf("snakePos[%u]: %u\n",i, snakePos[i]);
-//	}	
-	if(direction == LEFT){
-		snakePos[0] -= 1;
-	}
 	if(direction == RIGHT){
-		snakePos[0] += 1;
+		if(snakePos[0]%MAP_WIDTH == 31){
+			snakePos[0] -= MAP_WIDTH-1;
+		}
+		else{
+			snakePos[0] += 1;
+		}
 	}
 	if(direction == UP){
-		snakePos[0] -= 32;
+		if(snakePos[0] < MAP_WIDTH){
+			snakePos[0] += MAP_WIDTH*(MAP_HEIGHT-1);
+		}
+		else{
+			snakePos[0] -= MAP_WIDTH;
+		}
 	}
 	if(direction == DOWN){
-		snakePos[0] += 32;
+		if(snakePos[0] >= MAP_WIDTH*(MAP_HEIGHT-1)){
+			snakePos[0] -= MAP_WIDTH*(MAP_HEIGHT-1);
+		}
+		else{	
+			snakePos[0] += MAP_WIDTH;
+		}
 	}
+	printf("snakePos[0]: %u\n",snakePos[0]);	
 }
 
 // draw new head and delete old tail
@@ -105,25 +128,44 @@ void drawSnake(void){
 }
 
 // collision detection and handling
-void collisionDetect(void){
+uint8_t collisionDetect(void){
 	uint8_t x = snakePos[0]%32;
 	uint8_t y = snakePos[0]/32;
+	// collision with food
 	if((foodx == x) && (foody == y)){
-		printf("Food eaten bitch!\n");
+		printf("Food eaten!\n");
 		map[foodx][foody] = 0;
 		foodEaten = 1;
 		snakeLen++;
+		score++;
 	}
+	// collision with self
+	for(int i = 1; i < snakeLen; i++){
+		if(snakePos[0] == snakePos[i]){
+			drawRectangle(0, 10, 319, 239, BLACK);
+			drawText("You Have Died!", 104, 110);
+			displayUpdate();
+			return -1;
+		}
+	}
+	return 0;	
+}
+
+void updateScore(void){
+	sprintf(scoreChar, "%03u", score);
+	drawRectangle(296, 0, 320, 8, BLACK);
+	drawText(scoreChar, 296, 0);
 }
 
 // init snake
 void initSnake(void){
 	
-	memset(map, 0, sizeof map);	
+	memset(&map, 0, sizeof map);	
 	placeSnake();
 	drawBackground(BLACK);
-	drawText("Snake###############", 0, 0);
-	drawText("##########Score: 000", 160, 0);	
+	drawText("Score: ", 240, 0);
+	sprintf(scoreChar, "%03u", score);
+	drawText(scoreChar, 296, 0);	
 	// draw the initial snake
 	for(int y = 0; y < MAP_HEIGHT; y++){
 		for(int x = 0; x < MAP_WIDTH; x++){
@@ -146,21 +188,22 @@ int main(int argc, char *argv[])
 	displayInit();
 	initSnake();
 	displayUpdate();
-	sleep(1);
+	usleep(100000);
 
-	while(1){
-		printf("foodx: %u\n", foodx);
-		printf("foody: %u\n", foody);	
+	while(1){	
 		snakeDir = getInput();
 		moveSnake(snakeDir);
-		collisionDetect();
-		printf("foodEaten: %u\n", foodEaten);	
+		if(collisionDetect()) return 0;	
 		placeFood();
 		placeSnake();
 		drawSnake();
+		updateScore();
 		displayUpdate();
-		sleep(1);
+		usleep(100000);
 	}
 
 	exit(EXIT_SUCCESS);
 }
+
+//char cunt[4];
+//sprintf(cunt, "%i", score);
