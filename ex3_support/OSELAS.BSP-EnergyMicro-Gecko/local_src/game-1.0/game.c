@@ -54,8 +54,8 @@ void placeFood(void){
 	if(foodEaten == 1){
 		foodx = rand() % (MAP_WIDTH-1);
 		foody = rand() % (MAP_HEIGHT-1);
-		printf("foodx: %u\n", foodx);
-		printf("foody: %u\n", foody);
+		//printf("foodx: %u\n", foodx);
+		//printf("foody: %u\n", foody);
 		foodEaten = 0;
 		map[foodx][foody] = 2;
 		for(int y = 0; y < MAP_HEIGHT; y++){
@@ -73,7 +73,7 @@ void placeFood(void){
 // function for reading gamepad and setting direction according to snake rules
 uint8_t getDir(void){
 	uint8_t prevDir = snakeDir;
-	uint8_t dir = getInput();
+	uint8_t dir = buf; // buf is a global variable declared in input.h
 	if((dir == LEFT) || (dir == RIGHT) || (dir == UP) || (dir == DOWN)){
 		if((dir == LEFT) && (prevDir != RIGHT)){
 			return dir;
@@ -215,6 +215,7 @@ int main(int argc, char *argv[])
 	srand(time(NULL));	
 	
 	displayInit();
+	initGamepad();
 	initSnake();
 	usleep(SPEED);
 

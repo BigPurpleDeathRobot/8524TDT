@@ -17,6 +17,7 @@
 #include <linux/device.h>
 #include <linux/ioport.h>
 #include <linux/interrupt.h>
+#include <linux/signal.h>
 
 #include "efm32gg.h"
 
@@ -37,6 +38,7 @@ static struct cdev cdev; // struct for character device structure
 static struct class *cl; // struct for the device class
 void *gpio_portc_vmem; // pointer for the ioremapped virtual memory
 void *gpio_int_vmem; // pointer for the ioremapped virtual memory
+static struct fasync_struct *async_queue; // for stuff
 
 static struct file_operations gamepad_fops = {
 	.owner = THIS_MODULE,
@@ -66,7 +68,7 @@ static ssize_t gamepad_read(struct file *filp, char __user *buf, size_t len, lof
 }
 
 static int gamepad_fasync(int fd, struct file *filp, int mode){
-	return 0;	
+	return fasync_helper(fd, filp, mode, &async_queue);	
 }
 
 //// GPIO SETUP AND CLEANUP ////
@@ -150,8 +152,12 @@ static void cleanupGPIOint(void){
 
 //// GPIO INTERRUPT HANDLER ////
 static irqreturn_t intHandlerGPIO(int irq, void *dev_id){
-	printk(KERN_DEBUG "hello from gpio interrupt handler!\n");
+	// clear all interrupt flags for good measure
 	iowrite32(0xff, gpio_int_vmem + GPIO_IFC);
+	if(async_queue){
+		kill_fasync(&async_queue, SIGIO, POLL_IN);
+	}
+	printk(KERN_DEBUG "interrupt handled!\n");
 	return IRQ_HANDLED;
 }
 
