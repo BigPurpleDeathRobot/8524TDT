@@ -49,7 +49,7 @@ void placeSnake(void){
 	map[x][y] = 0;
 }
 
-// function for placing food on map
+// function for placing and drawing food on map
 void placeFood(void){
 	if(foodEaten == 1){
 		foodx = rand() % (MAP_WIDTH-1);
