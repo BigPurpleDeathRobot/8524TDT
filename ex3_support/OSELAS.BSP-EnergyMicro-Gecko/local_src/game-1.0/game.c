@@ -18,6 +18,7 @@
 #define RIGHT 4
 #define DOWN 8
 
+#define SPEED 100000
 
 //// DIRTY DIRTY GLOBALS ////
 uint8_t map[MAP_WIDTH][MAP_HEIGHT];
@@ -103,7 +104,7 @@ void moveSnake(uint8_t direction){
 	for(int i = MAP_SIZE-1; i > 0; i--){
 		if(i < snakeLen){
 			snakePos[i] = snakePos[i-1];
-			printf("snakePos[%u]: %u\n",i,snakePos[i]); 	
+			//printf("snakePos[%u]: %u\n",i,snakePos[i]); 	
 		}
 		else{
 			snakePos[i] = 13; // does not matter
@@ -141,18 +142,18 @@ void moveSnake(uint8_t direction){
 			snakePos[0] += MAP_WIDTH;
 		}
 	}
-	printf("snakePos[0]: %u\n",snakePos[0]);	
+	//printf("snakePos[0]: %u\n",snakePos[0]);	
 }
 
-// draw new head and delete old tail
+// delete old tail and draw new head
 void drawSnake(void){
-	uint16_t x = snakePos[0]%32;
-	uint16_t y = snakePos[0]/32;
-	drawRectangle(x*10, (y*10)+10, (x*10)+9, (y*10)+19, WHITE);
-	displayUpdate(x*10, (y*10)+10, 10, 10);
-	x = prevtailPos%32;
-	y = prevtailPos/32;
+	uint16_t x = prevtailPos%32;
+	uint16_t y = prevtailPos/32;
 	drawRectangle(x*10, (y*10)+10, (x*10)+9, (y*10)+19, BLACK);
+	displayUpdate(x*10, (y*10)+10, 10, 10);
+	x = snakePos[0]%32;
+	y = snakePos[0]/32;
+	drawRectangle(x*10, (y*10)+10, (x*10)+9, (y*10)+19, WHITE);
 	displayUpdate(x*10, (y*10)+10, 10, 10);		
 }
 
@@ -215,7 +216,7 @@ int main(int argc, char *argv[])
 	
 	displayInit();
 	initSnake();
-	usleep(100000);
+	usleep(SPEED);
 
 	while(1){	
 		snakeDir = getDir();
@@ -225,7 +226,7 @@ int main(int argc, char *argv[])
 		placeSnake();
 		drawSnake();
 		updateScore();
-		usleep(100000);
+		usleep(SPEED);
 	}
 
 	exit(EXIT_SUCCESS);
