@@ -6,7 +6,7 @@
 
 #include "input.h"
 
-int input_fd;
+static volatile int input_fd;
 char buf;
 
 uint8_t getInput(void){
