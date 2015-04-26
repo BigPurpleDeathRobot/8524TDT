@@ -44,18 +44,23 @@ void placeSnake(void){
 		y = snakePos[i]/32;
 		map[x][y] = 1;
 	}
+	// clear the old tail from map
 	x = prevtailPos%32;
 	y = prevtailPos/32;
 	map[x][y] = 0;
 }
 
 // function for placing and drawing food on map
+// don't place food under the snake
 void placeFood(void){
 	if(foodEaten == 1){
-		foodx = rand() % (MAP_WIDTH-1);
-		foody = rand() % (MAP_HEIGHT-1);
-		//printf("foodx: %u\n", foodx);
-		//printf("foody: %u\n", foody);
+		uint8_t foodPosValid = 1;
+		do{
+			foodx = rand() % (MAP_WIDTH-1);
+			foody = rand() % (MAP_HEIGHT-1);
+			if(map[foodx][foody] == 0)
+				foodPosValid = 0;
+		}while(foodPosValid);
 		foodEaten = 0;
 		map[foodx][foody] = 2;
 		for(int y = 0; y < MAP_HEIGHT; y++){
